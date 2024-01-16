@@ -37,7 +37,7 @@ def incluiCondicaoTrabalho(dfOrigin):
      opcoes2 = [1]
      dfOrigin["NaoColhendoEmMovimento"] = np.select(condicao2, opcoes2, )
 
-     condicao3 = [(dfOrigin['GndSpd'] <= 0.01)  & (dfOrigin['EngRPM'] != 0) ] 
+     condicao3 = [(dfOrigin['GndSpd'] <= 0.01)  & ((dfOrigin['BHF'] == 0) | (dfOrigin['BHF'] == 1)) ] 
      opcoes3 = [1]
      dfOrigin["Parado"] = np.select(condicao3, opcoes3, )   
 
