@@ -19,23 +19,6 @@ st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_w
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
 
-#def incluiCondicaoTrabalhoOld(dfOrigin):
-    # condicao1 = [(dfOrigin['BHF'] == 1) & (dfOrigin['BaseCutHght'] <= 330) & (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0)]
-    # opcoes1 = [1]
-    # dfOrigin["Working"] = np.select(condicao1, opcoes1,)
-
-    # condicao2 = [
-    # (dfOrigin['BHF']== 1) & (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] == 0)] 
-    # opcoes2 = [1]
-    # dfOrigin["Runing"] = np.select(condicao2, opcoes2, )
-
-    # condicao3 = [
-    # ((dfOrigin['BHF']== 1) |(dfOrigin['BHF']== 0)) & (dfOrigin['GndSpd'] == 0)] 
-    # opcoes3 = [1]
-    # dfOrigin["stoped"] = np.select(condicao3, opcoes3, )     
-
-
-#-------------------------------------------------------------------------------------------------------------------------
 def incluiCondicaoTrabalho(dfOrigin):
      condicao1 = [(dfOrigin['BHF'] == 1) & (dfOrigin['BaseCutHght'] <= 100) & (dfOrigin['BaseCutPrs'] != 0) & (dfOrigin['BaseCutRPM'] != 0) & ( dfOrigin['BaseCutPrs'] != 0 ) &  (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0) ]
      opcoes1 = [1]
@@ -87,7 +70,8 @@ def lerArquivo():
     else:
         st.error('Arquivo ainda não foi importado')
     return df, dfOrigin
-#teste----------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------
 def selConName(colx, coly, df):
     df_filter = df.loc[:, [colx, coly]]
     df_filter.dropna(inplace = True)
@@ -105,7 +89,28 @@ def showAllColumns(df, xColumnName, columnChoose, someColors):
     #ax.legend()
     #ax.xlabel(xColumnName);
     #ax.ylabel('Values');
-    #ax.title('ALL SINALS') 
+    #ax.title('ALL SINALS')
+    st.pyplot(fig)
+    print(columnChoose)
+
+def showAllColumnsByRow(df, xColumnName, columnChoose, someColors):
+    contador = 0
+    axs = []
+    #plt.figure(figsize=(20,10))
+    totalItems = len(columnChoose)
+    fig, axIndefined = plt.subplots(nrows=totalItems, sharex=True)
+    if totalItems >  1:
+       axs =  axIndefined
+    else:
+       axs.append(axIndefined)
+    for idx, coly in enumerate(columnChoose):
+         xValues, yValues = selConName(xColumnName,coly,df)
+         axs[idx].scatter(xValues, yValues, s=0.5)
+         axs[idx].set_ylabel(coly)
+         axs[idx].grid(True)
+         contador += 1
+    #axs[totalItems -1].set_ylabel(xColumnName)
+    fig.tight_layout()
     st.pyplot(fig)
     print(columnChoose)
 
@@ -167,11 +172,11 @@ Trabalho = st.sidebar.multiselect(
 # Check Box
 
 w1 = st.sidebar.checkbox("show table", False)
-linechart_select=st.sidebar.checkbox("Linechart_select",False)
-linechart_Origin=st.sidebar.checkbox("Linechart_Origin",False)
-linechart_full=st.sidebar.checkbox("Linechart_full",False)
-plot_fixed=st.sidebar.checkbox("Plot Estático",False)
 plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
+plot_fixed=st.sidebar.checkbox("Plot Estático",False)
+linechart_Origin=st.sidebar.checkbox("Linechart_Origin",False)
+#linechart_full=st.sidebar.checkbox("Linechart_full",False)
+
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Separação da página por Colunas
@@ -179,39 +184,31 @@ plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
 
 dfGeral, dfOrigin = lerArquivo()
 
-col1,col2 = st.columns(2)
+#col1,col2 = st.columns(2)
 
-with col1:
-    if normalizadoCheckbox:
-        dfGeral=(dfGeral-dfGeral.min())/(dfGeral.max()-dfGeral.min())
-        dfGeral["Time"]=dfOrigin["Time"]
-
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
-# Gráfico de linhas com varíáveis específicas do dataset normalizado pelo Tempo
-    if linechart_select:
-        print('$$$$$$$$$$$$ linechart_selected')
-        st.subheader("Line Chart Select")
-        st.line_chart(dfGeral,x="Time",y=options)
+#with col1:
+if normalizadoCheckbox:
+    dfGeral=(dfGeral-dfGeral.min())/(dfGeral.max()-dfGeral.min())
+    dfGeral["Time"]=dfOrigin["Time"]
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as novas varíáveis específicas de trabalho pelo Tempo
-    if linechart_Origin:
-        st.subheader("Line Chart Origin")
-        st.line_chart(dfOrigin,x="Time",y=Trabalho) 
-              
-        
+if linechart_Origin:
+    st.subheader("Line Chart Origin")
+    st.line_chart(dfOrigin,x="Time",y=Trabalho) 
+            
+    
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Tabela do DataFrame
-with col2:
-    if w1:
-        st.dataframe(dfOrigin,width=2000,height=550)
+if w1:
+   st.dataframe(dfOrigin,width=2000,height=550)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as varíáveis pelo Tempo
 
-if linechart_full:
-	st.subheader("Line Chart Full")
-	st.line_chart(dfGeral)
+#if linechart_full:
+#	st.subheader("Line Chart Full")
+#	st.line_chart(dfGeral)
 
 if plot_fixed:
     #arr = np.random.normal(1, 1, size=100)
@@ -222,3 +219,11 @@ if plot_fixed:
     someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
     showAllColumns(dfGeral, 'Time',options, someColors)
 
+if plot_fixed_mult:
+    #arr = np.random.normal(1, 1, size=100)
+    #fig, ax = plt.subplots()
+    #ax.hist(arr, bins=20)
+    #st.pyplot(fig)
+    st.subheader("Plot em graficos separados")
+    someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+    showAllColumnsByRow(dfGeral, 'Time',options, someColors)
