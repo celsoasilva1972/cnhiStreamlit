@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly as plt
+import matplotlib.pyplot as plt
 from pandas import read_csv
 
 
@@ -86,6 +87,28 @@ def lerArquivo():
     else:
         st.error('Arquivo ainda não foi importado')
     return df, dfOrigin
+#teste----------------------------------------------------------------------------------------------------
+def selConName(colx, coly, df):
+    df_filter = df.loc[:, [colx, coly]]
+    df_filter.dropna(inplace = True)
+    #print(df_filter.head())
+    return df_filter[colx], df_filter[coly]
+
+def showAllColumns(df, xColumnName, columnChoose, someColors):
+    contador = 0
+    plt.figure(figsize=(20,10))
+    fig, ax = plt.subplots()
+    for coly in columnChoose:
+         xValues, yValues = selConName(xColumnName,coly,df)
+         ax.plot(xValues, yValues,color=someColors[contador], label=coly)
+         contador += 1
+    #ax.legend()
+    #ax.xlabel(xColumnName);
+    #ax.ylabel('Values');
+    #ax.title('ALL SINALS')
+    st.pyplot(fig)
+    print(columnChoose)
+
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 #### titulo
@@ -147,6 +170,7 @@ w1 = st.sidebar.checkbox("show table", False)
 linechart_select=st.sidebar.checkbox("Linechart_select",False)
 linechart_Origin=st.sidebar.checkbox("Linechart_Origin",False)
 linechart_full=st.sidebar.checkbox("Linechart_full",False)
+plot_fixed=st.sidebar.checkbox("Plot Estático",False)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Separação da página por Colunas
@@ -172,7 +196,8 @@ with col1:
 # Gráfico de linhas com todas as novas varíáveis específicas de trabalho pelo Tempo
     if linechart_Origin:
         st.subheader("Line Chart Origin")
-        st.line_chart(dfOrigin,x="Time",y=Trabalho)       
+        st.line_chart(dfOrigin,x="Time",y=Trabalho) 
+              
         
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Tabela do DataFrame
@@ -186,4 +211,13 @@ with col2:
 if linechart_full:
 	st.subheader("Line Chart Full")
 	st.line_chart(dfGeral)
+
+if plot_fixed:
+    #arr = np.random.normal(1, 1, size=100)
+    #fig, ax = plt.subplots()
+    #ax.hist(arr, bins=20)
+    #st.pyplot(fig)
+    st.subheader("Line Chart Full")
+    someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+    showAllColumns(dfGeral, 'Time',options, someColors)
 
