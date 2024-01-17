@@ -4,6 +4,13 @@ import numpy as np
 import plotly as plt
 from pandas import read_csv
 
+
+# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+# configurações de sessão
+
+if 'arquivo' not in st.session_state:
+    st.session_state['initArquivo'] = 0
+
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # configurações da página
 st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_with_upwards_trend")
@@ -11,20 +18,20 @@ st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_w
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
 
-def incluiCondicaoTrabalhoOld(dfOrigin):
-    condicao1 = [(dfOrigin['BHF'] == 1) & (dfOrigin['BaseCutHght'] <= 330) & (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0)]
-    opcoes1 = [1]
-    dfOrigin["Working"] = np.select(condicao1, opcoes1,)
+#def incluiCondicaoTrabalhoOld(dfOrigin):
+    # condicao1 = [(dfOrigin['BHF'] == 1) & (dfOrigin['BaseCutHght'] <= 330) & (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0)]
+    # opcoes1 = [1]
+    # dfOrigin["Working"] = np.select(condicao1, opcoes1,)
 
-    condicao2 = [
-    (dfOrigin['BHF']== 1) & (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] == 0)] 
-    opcoes2 = [1]
-    dfOrigin["Runing"] = np.select(condicao2, opcoes2, )
+    # condicao2 = [
+    # (dfOrigin['BHF']== 1) & (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] == 0)] 
+    # opcoes2 = [1]
+    # dfOrigin["Runing"] = np.select(condicao2, opcoes2, )
 
-    condicao3 = [
-    ((dfOrigin['BHF']== 1) |(dfOrigin['BHF']== 0)) & (dfOrigin['GndSpd'] == 0)] 
-    opcoes3 = [1]
-    dfOrigin["stoped"] = np.select(condicao3, opcoes3, )     
+    # condicao3 = [
+    # ((dfOrigin['BHF']== 1) |(dfOrigin['BHF']== 0)) & (dfOrigin['GndSpd'] == 0)] 
+    # opcoes3 = [1]
+    # dfOrigin["stoped"] = np.select(condicao3, opcoes3, )     
 
 
 #-------------------------------------------------------------------------------------------------------------------------
@@ -40,6 +47,45 @@ def incluiCondicaoTrabalho(dfOrigin):
      condicao3 = [(dfOrigin['GndSpd'] <= 0.01)  & ((dfOrigin['BHF'] == 0) | (dfOrigin['BHF'] == 1)) ] 
      opcoes3 = [1]
      dfOrigin["Parado"] = np.select(condicao3, opcoes3, )   
+
+
+def lerArquivo():
+    arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'])
+
+    df = pd.DataFrame()
+    dfOrigin = pd.DataFrame()
+    if arquivo:
+        print(f'#####Arquivo lido ={arquivo.name} : {arquivo.type}')
+        if st.session_state['initArquivo'] == 0:
+            st.session_state['arquivo'] = arquivo
+        oldArquivo = st.session_state['arquivo']
+        if (oldArquivo != arquivo) or (st.session_state['initArquivo'] == 0):
+            st.session_state['initArquivo'] = 1
+            print(f'@@@@@@ arquivos diferentes: {oldArquivo.name} != {arquivo.name}')
+            st.session_state['arquivo'] = arquivo
+            match arquivo.type.split('/'):
+                case 'text','csv':
+                    df = read_csv(arquivo,sep =";")
+                                
+                    df.dtypes[df.dtypes == 'int64'] 
+
+                    df.replace(np.nan,0,inplace=True)
+                    
+                    df.rename(columns={"Time [s]": "Time"}, inplace= True)
+                    dfOrigin=df.copy()
+
+                    incluiCondicaoTrabalho(dfOrigin)               
+                    #df=(df-df.mean())/df.std()
+                    st.session_state['dfGeral'] = df
+                    st.session_state['dfOrigin'] = dfOrigin
+
+        else:
+            df = st.session_state['dfGeral'] 
+            dfOrigin = st.session_state['dfOrigin']
+        
+    else:
+        st.error('Arquivo ainda não foi importado')
+    return df, dfOrigin
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 #### titulo
@@ -105,46 +151,28 @@ linechart_full=st.sidebar.checkbox("Linechart_full",False)
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Separação da página por Colunas
 
+
+dfGeral, dfOrigin = lerArquivo()
+
 col1,col2 = st.columns(2)
 
 with col1:
-    arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'])
-
-    if arquivo:
-        print(arquivo.type)
-        match arquivo.type.split('/'):
-            case 'text','csv':
-                df = read_csv(arquivo,sep =";")
-                            
-                df.dtypes[df.dtypes == 'int64'] 
-
-                df.replace(np.nan,0,inplace=True)
-                
-                df.rename(columns={"Time [s]": "Time"}, inplace= True)
-                dfOrigin=df.copy()
-
-                incluiCondicaoTrabalho(dfOrigin)               
-                
-#                df=(df-df.mean())/df.std()
-                if normalizadoCheckbox:
-                    df=(df-df.min())/(df.max()-df.min())
-                    df["Time"]=dfOrigin["Time"]
+    if normalizadoCheckbox:
+        dfGeral=(dfGeral-dfGeral.min())/(dfGeral.max()-dfGeral.min())
+        dfGeral["Time"]=dfOrigin["Time"]
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com varíáveis específicas do dataset normalizado pelo Tempo
-                if linechart_select:
-                    st.subheader("Line Chart Select")
-                    st.line_chart(df,x="Time",y=options)
+    if linechart_select:
+        print('$$$$$$$$$$$$ linechart_selected')
+        st.subheader("Line Chart Select")
+        st.line_chart(dfGeral,x="Time",y=options)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as novas varíáveis específicas de trabalho pelo Tempo
-                if linechart_Origin:
-                    st.subheader("Line Chart Origin")
-                    st.line_chart(dfOrigin,x="Time",y=Trabalho)
-
-            
-    else:
-        st.error('Arquivo ainda não foi importado')            
+    if linechart_Origin:
+        st.subheader("Line Chart Origin")
+        st.line_chart(dfOrigin,x="Time",y=Trabalho)       
         
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Tabela do DataFrame
@@ -157,5 +185,5 @@ with col2:
 
 if linechart_full:
 	st.subheader("Line Chart Full")
-	st.line_chart(df)
+	st.line_chart(dfGeral)
 
