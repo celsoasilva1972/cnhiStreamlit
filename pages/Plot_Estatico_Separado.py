@@ -98,11 +98,26 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, someColors):
     axs = []
     #plt.figure(figsize=(20,10))
     totalItems = len(columnChoose)
-    fig, axIndefined = plt.subplots(nrows=totalItems, sharex=True)
-    if totalItems >  1:
-       axs =  axIndefined
-    else:
-       axs.append(axIndefined)
+    if totalItems == 0:
+        st.error('Nenhuma linha selecionada')
+        return
+    if totalItems == 1:
+       fig, axIndefined = plt.subplots(nrows=1, ncols=1)
+       axs.append(axIndefined)    
+    elif totalItems <= 3:
+       fig, axIndefined = plt.subplots(nrows=totalItems, ncols=1, sharex=True)
+       axs = axIndefined
+    else: # >= 4
+       rows = (totalItems // 2) + totalItems % 2
+       fig, axIndefined = plt.subplots(nrows=rows, ncols=2,sharex=True)
+       #axs = axIndefined
+       for line in range(rows):
+           axs.append(axIndefined[line][0])
+       for line in range(rows):
+           axs.append(axIndefined[line][1]) 
+       #axs.append(axIndefined[1][0])
+       #axs.append(axIndefined[0][1])
+       #axs.append(axIndefined[1][1])
     for idx, coly in enumerate(columnChoose):
          xValues, yValues = selConName(xColumnName,coly,df)
          axs[idx].scatter(xValues, yValues, s=0.5)
@@ -224,6 +239,7 @@ if plot_fixed_mult:
     #fig, ax = plt.subplots()
     #ax.hist(arr, bins=20)
     #st.pyplot(fig)
-    st.subheader("Plot em graficos separados")
-    someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
-    showAllColumnsByRow(dfGeral, 'Time',options, someColors)
+    if len(dfGeral) != 0:
+        st.subheader("Plot em gráficos separados")
+        someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+        showAllColumnsByRow(dfGeral, 'Time',options, someColors)
