@@ -16,6 +16,7 @@ if 'arquivo' not in st.session_state:
 # configurações da página
 st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_with_upwards_trend")
 
+
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
 
@@ -93,11 +94,12 @@ def showAllColumns(df, xColumnName, columnChoose, someColors):
     st.pyplot(fig)
     print(columnChoose)
 
-def showAllColumnsByRow(df, xColumnName, columnChoose, someColors):
+def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
     contador = 0
     axs = []
     #plt.figure(figsize=(20,10))
     totalItems = len(columnChoose)
+    plt.style.use('dark_background')
     if totalItems == 0:
         st.error('Nenhuma linha selecionada')
         return
@@ -121,7 +123,7 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, someColors):
     for idx, coly in enumerate(columnChoose):
          xValues, yValues = selConName(xColumnName,coly,df)
          axs[idx].scatter(xValues, yValues, s=0.5)
-         axs[idx].set_ylabel(coly)
+         axs[idx].set_ylabel(coly + LabelDict[coly])
          axs[idx].grid(True)
          contador += 1
     #axs[totalItems -1].set_ylabel(xColumnName)
@@ -129,6 +131,16 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, someColors):
     st.pyplot(fig)
     print(columnChoose)
 
+def columnsNames():
+    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
+    return columns
+
+def getUnidadeLabels():
+    unidadesDict = {}
+    for name in columnsNames() :
+        unidadesDict[name] = ''
+    unidadesDict['ChopperRPM'] = '(rpm)'
+    return unidadesDict
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 #### titulo
@@ -164,7 +176,7 @@ st.write ("O = HydrostatChrgPrs = Progressão de carga em pascal ou psi (indicat
 # Variáveis do df original normalizado
 options = st.sidebar.multiselect(
     'Linechart_select Y variable',
-    ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs'],
+    columnsNames(),
     ['BaseCutRPM'])
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
@@ -241,5 +253,6 @@ if plot_fixed_mult:
     #st.pyplot(fig)
     if len(dfGeral) != 0:
         st.subheader("Plot em gráficos separados")
-        someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
-        showAllColumnsByRow(dfGeral, 'Time',options, someColors)
+        #someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+        labelDict = getUnidadeLabels()
+        showAllColumnsByRow(dfGeral, 'Time',options, labelDict)
