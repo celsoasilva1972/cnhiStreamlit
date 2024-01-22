@@ -188,15 +188,6 @@ def tratarLabel (coluna,unidade):
     return juncao      
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
-#### titulo
-
-st.title ('Projeto Cana de açucar')
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
-# imagem web
-
-st.image('https://storage.googleapis.com/images-cultivar/c297cae0-31f1-4478-a654-3911220ef4f3.jpeg',use_column_width=True)
-
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Campos de dados CNHI
 expander = st.expander("***_Descrição Parâmetros_***")
 
@@ -318,6 +309,6 @@ if plot_fixed_mult:
         labelDict = getUnidadeLabels()
         showAllColumnsByRow(dfGeral, 'Time',options, labelDict)
 
-    st.subheader("Line Chart Full")
-    someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
-    showAllColumns(dfGeral, 'Time',options, someColors, st)
+    # st.subheader("Line Chart Full")
+    # someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+    # showAllColumns(dfGeral, 'Time',options, someColors, st)
