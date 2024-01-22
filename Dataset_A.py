@@ -4,7 +4,7 @@ import numpy as np
 import plotly as plt
 import matplotlib.pyplot as plt
 from pandas import read_csv
-
+from streamlit_option_menu import option_menu
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # configurações de sessão
@@ -87,7 +87,11 @@ def lerArquivo():
     else:
         st.error('Arquivo ainda não foi importado')
     return df, dfOrigin
-#teste----------------------------------------------------------------------------------------------------
+
+def columnsNames():
+    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
+    return columns
+
 def selConName(colx, coly, df):
     df_filter = df.loc[:, [colx, coly]]
     df_filter.dropna(inplace = True)
@@ -109,6 +113,77 @@ def showAllColumns(df, xColumnName, columnChoose, someColors):
     st.pyplot(fig)
     print(columnChoose)
 
+def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
+    contador = 0
+    axs = []
+
+    plt.figure(figsize=(10,10))
+
+    totalItems = len(columnChoose)
+
+    if totalItems == 0:
+        st.error('Nenhuma linha selecionada')
+        return
+    if totalItems == 1:
+       fig, axIndefined = plt.subplots(nrows=1, ncols=1,layout='constrained')
+       axs.append(axIndefined)    
+    elif totalItems <= 3:
+       fig, axIndefined = plt.subplots(nrows=totalItems, ncols=1, sharex=True,layout='constrained')
+       axs = axIndefined
+    else: # >= 4
+       rows = (totalItems // 2) + totalItems % 2
+       fig, axIndefined = plt.subplots(nrows=rows, ncols=2,sharex=True,layout='constrained')
+       if (totalItems % 2) == 1 :
+        axIndefined[-1,-1].axis('off')
+#       fig, axIndefined = plt.subplots(3, 3, figsize=(10, 6), layout='constrained')
+       #axs = axIndefined
+       for line in range(rows):
+           axs.append(axIndefined[line][0])
+       for line in range(rows):
+           axs.append(axIndefined[line][1]) 
+       #axs.append(axIndefined[1][0])
+       #axs.append(axIndefined[0][1])
+       #axs.append(axIndefined[1][1])
+    for idx, coly in enumerate(columnChoose):
+         xValues, yValues = selConName(xColumnName,coly,df)
+         axs[idx].tick_params(labelsize=5)
+         axs[idx].scatter(xValues, yValues, s=0.01)
+         axs[idx].set_ylabel(tratarLabel(coly , LabelDict[coly]),fontsize=5)
+ #        axs[idx].set_title(coly, fontsize=5, loc='center')
+         axs[idx].grid(True)
+         contador += 1
+    #axs[totalItems -1].set_ylabel(xColumnName)
+    fig.tight_layout()
+    fig.supxlabel('Time(s)',fontsize=7)
+    st.pyplot(fig)
+    print(columnChoose)
+
+
+def getUnidadeLabels():
+    unidadesDict = {}
+    for name in columnsNames() :
+        unidadesDict[name] = ''
+        unidadesDict['ChopperRPM'] = '(rpm)'
+        unidadesDict['ChopperHydPr'] = '(bar)'
+        unidadesDict['BaseCutPrs'] = '(bar)'
+        unidadesDict['GndSpd'] = '(km/h)'
+        unidadesDict['EngRPM'] = '(rpm)'
+        unidadesDict['EngLoad'] = '(%)'
+        unidadesDict['BaseCutHght'] = '(%)'
+        unidadesDict['BaseCutRPM'] = '(rpm)'
+        unidadesDict['BaseCutRPM'] = '(rpm)'
+        unidadesDict['BaseCutRPM'] = '(rpm)'
+        unidadesDict['BaseCutRPM'] = '(rpm)'
+
+    return unidadesDict
+
+def tratarLabel (coluna,unidade):
+    fim = 10
+#    for name in coluna():
+    if coluna == 'ChopperRPM':
+        return 'ChopRPM' + unidade
+    juncao = f'{coluna[0:fim]} {unidade}'
+    return juncao      
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 #### titulo
@@ -141,10 +216,11 @@ expander.write ("O = HydrostatChrgPrs = Progressão de carga em pascal ou psi (i
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra Lateral
 
+
 # Variáveis do df original normalizado
 options = st.sidebar.multiselect(
     'Linechart_select Y variable',
-    ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs'],
+    columnsNames(),
     ['BaseCutRPM'])
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
@@ -169,8 +245,8 @@ Trabalho = st.sidebar.multiselect(
 w1 = st.sidebar.checkbox("show table", False)
 linechart_select=st.sidebar.checkbox("Linechart_select",False)
 linechart_Origin=st.sidebar.checkbox("Linechart_Origin",False)
-linechart_full=st.sidebar.checkbox("Linechart_full",False)
-plot_fixed=st.sidebar.checkbox("Plot Estático",False)
+# linechart_full=st.sidebar.checkbox("Linechart_full",False)
+# plot_fixed=st.sidebar.checkbox("Plot não Iterativo",False)
 plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
@@ -209,16 +285,27 @@ with col2:
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as varíáveis pelo Tempo
 
-if linechart_full:
-	st.subheader("Line Chart Full")
-	st.line_chart(dfGeral)
+# if linechart_full:
+# 	st.subheader("Line Chart Full")
+# 	st.line_chart(dfGeral)
 
-if plot_fixed:
+# if plot_fixed:
+#     #arr = np.random.normal(1, 1, size=100)
+#     #fig, ax = plt.subplots()
+#     #ax.hist(arr, bins=20)
+#     #st.pyplot(fig)
+#     st.subheader("Line Chart Full")
+#     someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+#     showAllColumns(dfGeral, 'Time',options, someColors)
+
+if plot_fixed_mult:
     #arr = np.random.normal(1, 1, size=100)
     #fig, ax = plt.subplots()
     #ax.hist(arr, bins=20)
     #st.pyplot(fig)
-    st.subheader("Line Chart Full")
-    someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
-    showAllColumns(dfGeral, 'Time',options, someColors)
-
+    if len(dfGeral) != 0:
+    
+        st.subheader("Plot em gráficos separados")
+        #color = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+        labelDict = getUnidadeLabels()
+        showAllColumnsByRow(dfGeral, 'Time',options, labelDict)
