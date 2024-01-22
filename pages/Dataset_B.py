@@ -52,7 +52,7 @@ def createStatistics(df, yName):
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # imagem web
-st.image('https://s2-g1.glbimg.com/lsHhZKtAblXEyMOkHLLehzrRdCQ=/0x0:1700x1068/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2022/c/k/3jrm5hQmqfMQ2LTIsrrg/dsc2560.jpg',width=1080)
+st.image('https://s2-g1.glbimg.com/lsHhZKtAblXEyMOkHLLehzrRdCQ=/0x0:1700x1068/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2022/c/k/3jrm5hQmqfMQ2LTIsrrg/dsc2560.jpg',use_column_width=True)
 
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #

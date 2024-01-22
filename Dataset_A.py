@@ -117,26 +117,26 @@ st.title ('Projeto Cana de açucar')
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # imagem web
 
-st.image('https://storage.googleapis.com/images-cultivar/c297cae0-31f1-4478-a654-3911220ef4f3.jpeg',width=1080)
+st.image('https://storage.googleapis.com/images-cultivar/c297cae0-31f1-4478-a654-3911220ef4f3.jpeg',use_column_width=True)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Campos de dados CNHI
+expander = st.expander("***_Descrição Parâmetros_***")
 
-st.write ("A = Time = Tempo em segundos")
-st.write ("B = ChopperRPM = Rotação do picador")
-st.write ("C = ChopperHydPrs = Pressão hidraulica na bomba do picador")
-st.write ("D = BHF = Indicativo da máquina estar colhendo ou não(circuito industrial)")
-st.write ("E = BaseCutRPM = Velocidade do cortador de base")
-st.write ("F = BaseCutHght = Altura do cortador de base  = adimensional 0~400")
-st.write ("G = BaseCutPrs = Pressão do cortador de base ()")
-st.write ("H = GndSpd = Velocidade de deslocamento (km/h)")
-st.write ("I = EngRPM = Rotação do motor")
-st.write ("J = Js_1YAxPositn = Posição joystick")
-st.write ("K = Js_1XAxPositn = Posição joystick")
-st.write ("L = EngLoad = % Carga do motor (por ter reserva de torque pode chegar até 110%)")
-st.write ("M = A2000_ChopperHydOilPrsHi = Alarme de pressão alta no picador")
-st.write ("N = ChopperPctSetp = % Relação entre rotação do picador e rotação dos rolos(toletes maiores ou menores 10~25cm)")
-st.write ("O = HydrostatChrgPrs = Progressão de carga em pascal ou psi (indicativo de algum problema hidraulico ou bomba)")
+expander.write ("A = Time = Tempo em segundos")
+expander.write ("B = ChopperRPM = Rotação do picador")
+expander.write ("C = ChopperHydPrs = Pressão hidraulica na bomba do picador")
+expander.write ("D = BHF = Indicativo da máquina estar colhendo ou não(circuito industrial)")
+expander.write ("E = BaseCutRPM = Velocidade do cortador de base")
+expander.write ("F = BaseCutHght = Altura do cortador de base  = adimensional 0~400")
+expander.write ("G = BaseCutPrs = Pressão do cortador de base ()")
+expander.write ("I = EngRPM = Rotação do motor")
+expander.write ("J = Js_1YAxPositn = Posição joystick")
+expander.write ("K = Js_1XAxPositn = Posição joystick")
+expander.write ("L = EngLoad = % Carga do motor (por ter reserva de torque pode chegar até 110%)")
+expander.write ("M = A2000_ChopperHydOilPrsHi = Alarme de pressão alta no picador")
+expander.write ("N = ChopperPctSetp = % Relação entre rotação do picador e rotação dos rolos(toletes maiores ou menores 10~25cm)")
+expander.write ("O = HydrostatChrgPrs = Progressão de carga em pascal ou psi (indicativo de algum problema hidraulico ou bomba)")
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra Lateral
