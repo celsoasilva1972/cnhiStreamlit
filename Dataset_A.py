@@ -4,7 +4,8 @@ import numpy as np
 import plotly as plt
 import matplotlib.pyplot as plt
 from pandas import read_csv
-from streamlit_option_menu import option_menu
+from commom import commomHeader, showAllColumns
+
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # configurações de sessão
@@ -98,20 +99,21 @@ def selConName(colx, coly, df):
     #print(df_filter.head())
     return df_filter[colx], df_filter[coly]
 
-def showAllColumns(df, xColumnName, columnChoose, someColors):
-    contador = 0
-    plt.figure(figsize=(20,10))
-    fig, ax = plt.subplots()
-    for coly in columnChoose:
-         xValues, yValues = selConName(xColumnName,coly,df)
-         ax.plot(xValues, yValues,color=someColors[contador], label=coly)
-         contador += 1
-    #ax.legend()
-    #ax.xlabel(xColumnName);
-    #ax.ylabel('Values');
-    #ax.title('ALL SINALS') 
-    st.pyplot(fig)
-    print(columnChoose)
+# def showAllColumns(df, xColumnName, columnChoose, someColors):
+#     contador = 0
+#     plt.figure(figsize=(20,10))
+#     fig, ax = plt.subplots()
+#     for coly in columnChoose:
+#          xValues, yValues = selConName(xColumnName,coly,df)
+#          ax.plot(xValues, yValues,color=someColors[contador], label=coly)
+#          contador += 1
+#     #ax.legend()
+#     #ax.xlabel(xColumnName);
+#     #ax.ylabel('Values');
+#     #ax.title('ALL SINALS') 
+#     st.pyplot(fig)
+#     print(columnChoose)
+
 
 def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
     contador = 0
@@ -214,6 +216,11 @@ expander.write ("N = ChopperPctSetp = % Relação entre rotação do picador e r
 expander.write ("O = HydrostatChrgPrs = Progressão de carga em pascal ou psi (indicativo de algum problema hidraulico ou bomba)")
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+# Desenha o header de todas as páginas
+commomHeader(st)
+
+
+# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra Lateral
 
 
@@ -303,9 +310,14 @@ if plot_fixed_mult:
     #fig, ax = plt.subplots()
     #ax.hist(arr, bins=20)
     #st.pyplot(fig)
+
     if len(dfGeral) != 0:
     
         st.subheader("Plot em gráficos separados")
         #color = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
         labelDict = getUnidadeLabels()
         showAllColumnsByRow(dfGeral, 'Time',options, labelDict)
+
+    st.subheader("Line Chart Full")
+    someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
+    showAllColumns(dfGeral, 'Time',options, someColors, st)
