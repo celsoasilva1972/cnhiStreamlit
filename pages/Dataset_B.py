@@ -1,14 +1,13 @@
 import streamlit as st
 import pandas as pd
 from pandas import read_csv
+from commom import commomHeader
+
+
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 #configurações da página
 st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_with_upwards_trend")
 
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
-#### titulo
-
-st.title ('Projeto Cana de açucar')
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 #####Funções
@@ -50,9 +49,18 @@ def createStatistics(df, yName):
 
     return listValues
 
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
-# imagem web
-st.image('https://s2-g1.glbimg.com/lsHhZKtAblXEyMOkHLLehzrRdCQ=/0x0:1700x1068/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2022/c/k/3jrm5hQmqfMQ2LTIsrrg/dsc2560.jpg',use_column_width=True)
+# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+# Desenha o header de todas as páginas
+commomHeader(st)
+
+
+# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+# Barra Lateral
+# Variáveis do df original normalizado
+options = st.sidebar.multiselect(
+    'Linechart_select Y variable',
+    ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs'],
+    ['BaseCutRPM'])
 
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
