@@ -165,25 +165,43 @@ def getUnidadeLabels():
     unidadesDict = {}
     for name in columnsNames() :
         unidadesDict[name] = ''
+        unidadesDict['ChopperHydPrs'] = '(bar)'
         unidadesDict['ChopperRPM'] = '(rpm)'
-        unidadesDict['ChopperHydPr'] = '(bar)'
         unidadesDict['BaseCutPrs'] = '(bar)'
+        unidadesDict['BaseCutRPM'] = '(rpm)'
         unidadesDict['GndSpd'] = '(km/h)'
         unidadesDict['EngRPM'] = '(rpm)'
         unidadesDict['EngLoad'] = '(%)'
         unidadesDict['BaseCutHght'] = '(%)'
-        unidadesDict['BaseCutRPM'] = '(rpm)'
-        unidadesDict['BaseCutRPM'] = '(rpm)'
-        unidadesDict['BaseCutRPM'] = '(rpm)'
-        unidadesDict['BaseCutRPM'] = '(rpm)'
+        unidadesDict['ChopperPctSetp'] = '(%)'
+        unidadesDict['HydrostatChrgPrs'] = '(bar)'
+        unidadesDict['A2000_ChopperHydOilPrsHi'] = '(bin)'
+        unidadesDict['BHF'] = '(bin)'
+        unidadesDict['Js_1YAxPositn'] = '(?)'
+        unidadesDict['Js_1XAxPositn'] = '(?)'
+
 
     return unidadesDict
 
 def tratarLabel (coluna,unidade):
     fim = 10
 #    for name in coluna():
+    if coluna == 'ChopperHydPrs':
+        return 'ChopHPr' + unidade
     if coluna == 'ChopperRPM':
         return 'ChopRPM' + unidade
+    if coluna == 'BaseCutPr':
+        return 'BaseCPr' + unidade
+    if coluna == 'BaseCutHght':
+        return 'BaseCutHg' + unidade
+    if coluna == 'ChopperPctSetp':
+        return 'ChopPct' + unidade
+    if coluna == 'BaseCutRPM':
+        return 'BaseCRPM' + unidade
+    if coluna == 'A2000_ChopperHydOilPrsHi':
+        return 'A2000Chop' + unidade
+    
+
     juncao = f'{coluna[0:fim]} {unidade}'
     return juncao      
 
@@ -237,29 +255,33 @@ dfGeral, dfOrigin = lerArquivo()
 col1,col2 = st.columns(2)
 
 with col1:
-    if normalizadoCheckbox:
-        dfGeral=(dfGeral-dfGeral.min())/(dfGeral.max()-dfGeral.min())
-        dfGeral["Time"]=dfOrigin["Time"]
+    if len(dfGeral) != 0: 
+        if normalizadoCheckbox:
+            dfGeral=(dfGeral-dfGeral.min())/(dfGeral.max()-dfGeral.min())
+            dfGeral["Time"]=dfOrigin["Time"]
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com varíáveis específicas do dataset normalizado pelo Tempo
-    if linechart_select:
-        print('$$$$$$$$$$$$ linechart_selected')
-        st.subheader("Line Chart Select")
-        st.line_chart(dfGeral,x="Time",y=options)
+    if len(dfGeral) != 0:   
+        if linechart_select:
+            print('$$$$$$$$$$$$ linechart_selected')
+            st.subheader("Line Chart Select")
+            st.line_chart(dfGeral,x="Time",y=options)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as novas varíáveis específicas de trabalho pelo Tempo
-    if linechart_Origin:
-        st.subheader("Line Chart Origin")
-        st.line_chart(dfOrigin,x="Time",y=Trabalho) 
+    if len(dfGeral) != 0:     
+        if linechart_Origin:
+            st.subheader("Line Chart Origin")
+            st.line_chart(dfOrigin,x="Time",y=Trabalho) 
               
         
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Tabela do DataFrame
 with col2:
-    if w1:
-        st.dataframe(dfOrigin,width=2000,height=550)
+    if len(dfGeral) != 0: 
+        if w1:
+            st.dataframe(dfOrigin,width=2000,height=550)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as varíáveis pelo Tempo

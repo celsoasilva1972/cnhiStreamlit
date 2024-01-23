@@ -69,7 +69,10 @@ w1 = st.sidebar.checkbox("show table", False)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Carregamento dos dados
+
+
 arquivo = st.file_uploader("Escolha um arquivo CSV_B",type=['csv'])
+
 
 if arquivo:
     print(arquivo.type)
@@ -96,8 +99,9 @@ if arquivo:
         statisticas.loc[i] = createStatistics(dfTwoColumns, coly)
 
 #Tabela do DataFrame
-if w1:
-    st.dataframe(statisticas,width=2000,height=550)
+    if len(arquivo) != 0: 
+        if w1:
+            st.dataframe(statisticas,width=2000,height=550)
 
 
 
