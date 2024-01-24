@@ -74,15 +74,16 @@ def lerArquivo():
                     df.replace(np.nan,0,inplace=True)
                     
                     df.rename(columns={"Time [s]": "Time"}, inplace= True)
+                    incluiCondicaoTrabalho(df)
                     dfOrigin=df.copy()
 
-                    incluiCondicaoTrabalho(dfOrigin)               
+                    # incluiCondicaoTrabalho(dfOrigin)               
                     #df=(df-df.mean())/df.std()
                     st.session_state['dfGeral'] = df
                     st.session_state['dfOrigin'] = dfOrigin
 
         else:
-            df = st.session_state['dfGeral'] 
+            df = st.session_state['dfGeral']
             dfOrigin = st.session_state['dfOrigin']
         
     else:
@@ -90,7 +91,7 @@ def lerArquivo():
     return df, dfOrigin
 
 def columnsNames():
-    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
+    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs','Colhendo','NaoColhendoEmMovimento','Parado']
     return columns
 
 def selConName(colx, coly, df):
@@ -213,6 +214,8 @@ commomHeader(st)
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra Lateral
 
+# Check Box normalização
+normalizadoCheckbox = st.sidebar.checkbox("normalizado",False)
 
 # Variáveis do df original normalizado
 options = st.sidebar.multiselect(
@@ -220,9 +223,7 @@ options = st.sidebar.multiselect(
     columnsNames(),
     ['BaseCutRPM'])
 
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
-# Check Box normalização
-normalizadoCheckbox = st.sidebar.checkbox("normalizado",False)
+
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Variáveis de novas variáveis de acordo com condições de trabalho
@@ -232,16 +233,16 @@ normalizadoCheckbox = st.sidebar.checkbox("normalizado",False)
 #    ['Working','Runing','stoped'],
 #    ['Working'])
 
-Trabalho = st.sidebar.multiselect(
-    'Linechart_select Y variable',
-    ['Colhendo','NaoColhendoEmMovimento','Parado'],
-    ['Colhendo'])
+# Trabalho = st.sidebar.multiselect(
+#     'Linechart_select Y variable',
+#     ['Colhendo','NaoColhendoEmMovimento','Parado'],
+#     ['Colhendo'])
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Check Box
 
 w1 = st.sidebar.checkbox("show table", False)
 linechart_select=st.sidebar.checkbox("Linechart_select",False)
-linechart_Origin=st.sidebar.checkbox("Linechart_Origin",False)
+# linechart_Origin=st.sidebar.checkbox("Linechart_Origin",False)
 # linechart_full=st.sidebar.checkbox("Linechart_full",False)
 # plot_fixed=st.sidebar.checkbox("Plot não Iterativo",False)
 plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
@@ -270,10 +271,10 @@ with col1:
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Gráfico de linhas com todas as novas varíáveis específicas de trabalho pelo Tempo
-    if len(dfGeral) != 0:     
-        if linechart_Origin:
-            st.subheader("Line Chart Origin")
-            st.line_chart(dfOrigin,x="Time",y=Trabalho) 
+    # if len(dfGeral) != 0:     
+    #     if linechart_Origin:
+    #         st.subheader("Line Chart Origin")
+    #         st.line_chart(dfOrigin,x="Time",y=Trabalho) 
               
         
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
@@ -310,7 +311,8 @@ if plot_fixed_mult:
         st.subheader("Plot em gráficos separados")
         #color = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
         labelDict = getUnidadeLabels()
-        showAllColumnsByRow(dfGeral, 'Time',options, labelDict)
+
+        showAllColumnsByRow(dfGeral,'Time',options, labelDict)
 
     # st.subheader("Line Chart Full")
     # someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
