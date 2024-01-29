@@ -158,6 +158,7 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
     #axs[totalItems -1].set_ylabel(xColumnName)
     fig.tight_layout()
     fig.supxlabel('Time(s)',fontsize=7)
+    plt.gcf().set_size_inches(12, 10)
     st.pyplot(fig)
     print(columnChoose)
 
@@ -166,20 +167,20 @@ def getUnidadeLabels():
     unidadesDict = {}
     for name in columnsNames() :
         unidadesDict[name] = ''
-        unidadesDict['ChopperHydPrs'] = '\n(bar)'
-        unidadesDict['ChopperRPM'] = '\n(rpm)'
-        unidadesDict['BaseCutPrs'] = '\n(bar)'
-        unidadesDict['BaseCutRPM'] = '\n(rpm)'
-        unidadesDict['GndSpd'] = '\n(km/h)'
-        unidadesDict['EngRPM'] = '\n(rpm)'
-        unidadesDict['EngLoad'] = '\n(%)'
-        unidadesDict['BaseCutHght'] = '\n(%)'
-        unidadesDict['ChopperPctSetp'] = '\n(%)'
-        unidadesDict['HydrostatChrgPrs'] = '\n(bar)'
-        unidadesDict['A2000_ChopperHydOilPrsHi'] = '\n(bin)'
-        unidadesDict['BHF'] = '\n(bin)'
-        unidadesDict['Js_1YAxPositn'] = '\n(?)'
-        unidadesDict['Js_1XAxPositn'] = '\n(?)'
+        unidadesDict['ChopperHydPrs'] = '(bar)'
+        unidadesDict['ChopperRPM'] = '(rpm)'
+        unidadesDict['BaseCutPrs'] = '(bar)'
+        unidadesDict['BaseCutRPM'] = '(rpm)'
+        unidadesDict['GndSpd'] = '(km/h)'
+        unidadesDict['EngRPM'] = '(rpm)'
+        unidadesDict['EngLoad'] = '(%)'
+        unidadesDict['BaseCutHght'] = '(%)'
+        unidadesDict['ChopperPctSetp'] = '(%)'
+        unidadesDict['HydrostatChrgPrs'] = '(bar)'
+        unidadesDict['A2000_ChopperHydOilPrsHi'] = '(bin)'
+        unidadesDict['BHF'] = '(bin)'
+        unidadesDict['Js_1YAxPositn'] = '(?)'
+        unidadesDict['Js_1XAxPositn'] = '(?)'
 
 
     return unidadesDict
