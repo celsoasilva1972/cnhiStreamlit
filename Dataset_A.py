@@ -120,7 +120,7 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
     contador = 0
     axs = []
 
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(10,8))
 
     totalItems = len(columnChoose)
 
@@ -128,14 +128,17 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
         st.error('Nenhuma linha selecionada')
         return
     if totalItems == 1:
+    #    plt.figure(figsize=(20,2))
        fig, axIndefined = plt.subplots(nrows=1, ncols=1,layout='constrained')
        axs.append(axIndefined)    
     elif totalItems <= 3:
-       fig, axIndefined = plt.subplots(nrows=totalItems, ncols=1, sharex=True,layout='constrained')
+    #    plt.figure(figsize=(5,3))
+       fig, axIndefined = plt.subplots(nrows=totalItems, ncols=1,layout='constrained')
        axs = axIndefined
     else: # >= 4
+    #    plt.figure(figsize=(5,3))
        rows = (totalItems // 2) + totalItems % 2
-       fig, axIndefined = plt.subplots(nrows=rows, ncols=2,sharex=True,layout='constrained')
+       fig, axIndefined = plt.subplots(nrows=rows,ncols=2,layout='constrained')
        if (totalItems % 2) == 1 :
         axIndefined[-1,-1].axis('off')
 #       fig, axIndefined = plt.subplots(3, 3, figsize=(10, 6), layout='constrained')
@@ -143,22 +146,29 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
        for line in range(rows):
            axs.append(axIndefined[line][0])
        for line in range(rows):
-           axs.append(axIndefined[line][1]) 
+           axs.append(axIndefined[line][1])
+       plt.gcf().set_size_inches(10, 8)     
        #axs.append(axIndefined[1][0])
        #axs.append(axIndefined[0][1])
        #axs.append(axIndefined[1][1])
+    
     for idx, coly in enumerate(columnChoose):
          xValues, yValues = selConName(xColumnName,coly,df)
          axs[idx].tick_params(labelsize=5)
-         axs[idx].scatter(xValues, yValues, s=0.01)
-         axs[idx].set_ylabel(tratarLabel(coly , LabelDict[coly]),fontsize=5)
+         axs[idx].scatter(xValues, yValues, s=0.5)
+         axs[idx].set_ylabel(tratarLabel(coly , LabelDict[coly]),fontsize=8)
+        #  axs[idx].axes.xaxis.set_ticklabels([])
  #        axs[idx].set_title(coly, fontsize=5, loc='center')
          axs[idx].grid(True)
          contador += 1
+        #  idxLast = idx
+        #  xValuesLast = xValues
     #axs[totalItems -1].set_ylabel(xColumnName)
+    # axs[idxLast].axes.xaxis.set_ticklabels(xValuesLast)
+    # axs[idxLast//2].axes.xaxis.set_ticklabels(xValuesLast)
     fig.tight_layout()
-    fig.supxlabel('Time(s)',fontsize=7)
-    plt.gcf().set_size_inches(12, 10)
+    fig.supxlabel( "            Time(s)",fontsize=10)
+    
     st.pyplot(fig)
     print(columnChoose)
 
@@ -167,20 +177,20 @@ def getUnidadeLabels():
     unidadesDict = {}
     for name in columnsNames() :
         unidadesDict[name] = ''
-        unidadesDict['ChopperHydPrs'] = '(bar)'
-        unidadesDict['ChopperRPM'] = '(rpm)'
-        unidadesDict['BaseCutPrs'] = '(bar)'
-        unidadesDict['BaseCutRPM'] = '(rpm)'
-        unidadesDict['GndSpd'] = '(km/h)'
-        unidadesDict['EngRPM'] = '(rpm)'
-        unidadesDict['EngLoad'] = '(%)'
-        unidadesDict['BaseCutHght'] = '(%)'
-        unidadesDict['ChopperPctSetp'] = '(%)'
-        unidadesDict['HydrostatChrgPrs'] = '(bar)'
-        unidadesDict['A2000_ChopperHydOilPrsHi'] = '(bin)'
-        unidadesDict['BHF'] = '(bin)'
-        unidadesDict['Js_1YAxPositn'] = '(?)'
-        unidadesDict['Js_1XAxPositn'] = '(?)'
+        unidadesDict['ChopperHydPrs'] = '\n(bar)'
+        unidadesDict['ChopperRPM'] = '\n(rpm)'
+        unidadesDict['BaseCutPrs'] = '\n(bar)'
+        unidadesDict['BaseCutRPM'] = '\n(rpm)'
+        unidadesDict['GndSpd'] = '\n(km/h)'
+        unidadesDict['EngRPM'] = '\n(rpm)'
+        unidadesDict['EngLoad'] = '\n(%)'
+        unidadesDict['BaseCutHght'] = '\n(%)'
+        unidadesDict['ChopperPctSetp'] = '\n(%)'
+        unidadesDict['HydrostatChrgPrs'] = '\n(bar)'
+        unidadesDict['A2000_ChopperHydOilPrsHi'] = '\n(bin)'
+        unidadesDict['BHF'] = '\n(bin)'
+        unidadesDict['Js_1YAxPositn'] = '\n(?)'
+        unidadesDict['Js_1XAxPositn'] = '\n(?)'
 
 
     return unidadesDict
