@@ -57,15 +57,15 @@ commomHeader(st)
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra Lateral
 # Variáveis do df original normalizado
-options = st.sidebar.multiselect(
-    'Linechart_select Y variable',
-    ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs'],
-    ['BaseCutRPM'])
+#options = st.sidebar.multiselect(
+#    'Linechart_select Y variable',
+#    ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs'],
+#    ['BaseCutRPM'])
 
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra Lateral
-w1 = st.sidebar.checkbox("show table", False)
+w1 = st.sidebar.checkbox("show table", True)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Carregamento dos dados
@@ -99,7 +99,7 @@ if arquivo:
         statisticas.loc[i] = createStatistics(dfTwoColumns, coly)
 
 #Tabela do DataFrame
-    if len(arquivo) != 0: 
+    if arquivo: 
         if w1:
             st.dataframe(statisticas,width=2000,height=550)
 
