@@ -37,23 +37,51 @@ st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_w
 
 
 #-------------------------------------------------------------------------------------------------------------------------
+# def incluiCondicaoTrabalho(dfOrigin):
+#      condicao1 = [(dfOrigin['BHF'] == 1) & (dfOrigin['BaseCutHght'] <= 100) & (dfOrigin['BaseCutPrs'] != 0) & (dfOrigin['BaseCutRPM'] != 0) & ( dfOrigin['BaseCutPrs'] != 0 ) &  (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0) ]
+#      opcoes1 = [1]
+#      dfOrigin["Colhendo"] = np.select(condicao1, opcoes1,)
+
+#      condicao2 = [(dfOrigin['BHF'] == 1)  & ( dfOrigin['BaseCutPrs'] <= 0.01) &  (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0) ]
+#      opcoes2 = [1]
+#      dfOrigin["NaoColhendoEmMovimento"] = np.select(condicao2, opcoes2, )
+
+#      condicao3 = [(dfOrigin['GndSpd'] <= 0.01)  & ((dfOrigin['BHF'] == 0) | (dfOrigin['BHF'] == 1)) ] 
+#      opcoes3 = [1]
+#      dfOrigin["Parado"] = np.select(condicao3, opcoes3, )   
+
 def incluiCondicaoTrabalho(dfOrigin):
-     condicao1 = [(dfOrigin['BHF'] == 1) & (dfOrigin['BaseCutHght'] <= 100) & (dfOrigin['BaseCutPrs'] != 0) & (dfOrigin['BaseCutRPM'] != 0) & ( dfOrigin['BaseCutPrs'] != 0 ) &  (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0) ]
-     opcoes1 = [1]
-     dfOrigin["Colhendo"] = np.select(condicao1, opcoes1,)
+    condicao1 = [(dfOrigin['ChopperRPM'] == 0) & (dfOrigin["ChopperHydPrs"] == 0) & (dfOrigin["BHF"] == 0) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] == 0) & (dfOrigin["GndSpd"] == 0) & (dfOrigin['EngRPM'] == 0) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) & (dfOrigin["HydrostatChrgPrs"] == 0)]
+    opcoes1 =  [1]
+    dfOrigin["Off"] = np.select(condicao1, opcoes1,)
 
-     condicao2 = [(dfOrigin['BHF'] == 1)  & ( dfOrigin['BaseCutPrs'] <= 0.01) &  (dfOrigin['GndSpd'] != 0) & (dfOrigin['EngRPM'] != 0) ]
-     opcoes2 = [1]
-     dfOrigin["NaoColhendoEmMovimento"] = np.select(condicao2, opcoes2, )
+    condicao2 = [(dfOrigin['ChopperRPM'] == 0) & (dfOrigin["ChopperHydPrs"] <= 30) & (dfOrigin["BHF"] == 0) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] == 0) & (dfOrigin["GndSpd"] == 0) & (dfOrigin['EngRPM'] == 800) & (dfOrigin['EngLoad'] <= 20) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    opcoes2 =  [1]
+    dfOrigin["PontoMorto"] = np.select(condicao2, opcoes2,)
+    
+    condicao3 = [(dfOrigin['ChopperRPM'] == 182) & (dfOrigin["ChopperHydPrs"] >= 34 )&(dfOrigin["ChopperHydPrs"] <=36 ) & (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] <= 5) & (dfOrigin["GndSpd"] == 0) & (dfOrigin['EngRPM']  <=1600) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    opcoes3 =  [1]
+    dfOrigin["EsperandoColheita"] = np.select(condicao3, opcoes3,)
 
-     condicao3 = [(dfOrigin['GndSpd'] <= 0.01)  & ((dfOrigin['BHF'] == 0) | (dfOrigin['BHF'] == 1)) ] 
-     opcoes3 = [1]
-     dfOrigin["Parado"] = np.select(condicao3, opcoes3, )   
+    condicao4 = [(dfOrigin['ChopperRPM'] <= 10) & (dfOrigin["ChopperHydPrs"] <= 25) & (dfOrigin["BHF"] == 0) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] <= 5) & (dfOrigin["GndSpd"] > 0) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    opcoes4 =  [1]
+    dfOrigin["Movendo"] = np.select(condicao4, opcoes4,)
 
+    condicao5 = [(dfOrigin['ChopperRPM'] <= 177) & (dfOrigin["ChopperHydPrs"] > 200) & (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutRPM"] > 515) & (dfOrigin["BaseCutHght"] <= 100) & (dfOrigin["BaseCutPrs"] >= 40) & (dfOrigin["GndSpd"]  <=10.0) & (dfOrigin["GndSpd"]  >=0.5 ) & (dfOrigin['EngRPM'] <= 1699) & (dfOrigin['EngLoad'] >40 ) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    opcoes5 =  [1]
+    dfOrigin["Colhendo"] = np.select(condicao5, opcoes5,)
+
+    condicao6 = [(dfOrigin['ChopperRPM'] > 177) & (dfOrigin["ChopperHydPrs"] > 80) & (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutRPM"] > 515) & (dfOrigin["BaseCutHght"] <= 100) & (dfOrigin["BaseCutPrs"] >= 40) & (dfOrigin["GndSpd"]  <=10.0) & (dfOrigin["GndSpd"]  >=0.5 ) & (dfOrigin['EngRPM']  <= 1699) & (dfOrigin['EngLoad'] >=50) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 1) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    opcoes6 =  [1]
+    dfOrigin["Embuchado"] = np.select(condicao6, opcoes6,)
+
+    condicao7 = [(dfOrigin['ChopperRPM'] >= 255) & (dfOrigin["ChopperHydPrs"] <= 25) & (dfOrigin["BHF"] == 2) & (dfOrigin["BaseCutRPM"] == 630) & (dfOrigin["BaseCutHght"] >= 300) & (dfOrigin["BaseCutPrs"] <= 25) & (dfOrigin["GndSpd"] <= 3) & (dfOrigin['EngRPM'] >= 1700) & (dfOrigin['EngLoad'] >=50) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    opcoes7 =  [1]
+    dfOrigin["Reversao"] = np.select(condicao7, opcoes7,)
 
 def lerArquivo():
     arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'])
-
+   
     df = pd.DataFrame()
     dfOrigin = pd.DataFrame()
     if arquivo:
@@ -91,7 +119,7 @@ def lerArquivo():
     return df, dfOrigin
 
 def columnsNames():
-    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs','Colhendo','NaoColhendoEmMovimento','Parado']
+    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs','Off','PontoMorto','EsperandoColheita','Movendo','Colhendo','Embuchado','Reversao']
     return columns
 
 def selConName(colx, coly, df):
@@ -99,21 +127,6 @@ def selConName(colx, coly, df):
     df_filter.dropna(inplace = True)
     #print(df_filter.head())
     return df_filter[colx], df_filter[coly]
-
-# def showAllColumns(df, xColumnName, columnChoose, someColors):
-#     contador = 0
-#     plt.figure(figsize=(20,10))
-#     fig, ax = plt.subplots()
-#     for coly in columnChoose:
-#          xValues, yValues = selConName(xColumnName,coly,df)
-#          ax.plot(xValues, yValues,color=someColors[contador], label=coly)
-#          contador += 1
-#     #ax.legend()
-#     #ax.xlabel(xColumnName);
-#     #ax.ylabel('Values');
-#     #ax.title('ALL SINALS') 
-#     st.pyplot(fig)
-#     print(columnChoose)
 
 
 def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
@@ -141,31 +154,22 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
        fig, axIndefined = plt.subplots(nrows=rows,ncols=2,layout='constrained')
        if (totalItems % 2) == 1 :
         axIndefined[-1,-1].axis('off')
-#       fig, axIndefined = plt.subplots(3, 3, figsize=(10, 6), layout='constrained')
-       #axs = axIndefined
+
        for line in range(rows):
            axs.append(axIndefined[line][0])
        for line in range(rows):
            axs.append(axIndefined[line][1])
        plt.gcf().set_size_inches(10, 8)     
-       #axs.append(axIndefined[1][0])
-       #axs.append(axIndefined[0][1])
-       #axs.append(axIndefined[1][1])
     
     for idx, coly in enumerate(columnChoose):
          xValues, yValues = selConName(xColumnName,coly,df)
          axs[idx].tick_params(labelsize=5)
          axs[idx].scatter(xValues, yValues, s=0.5)
          axs[idx].set_ylabel(tratarLabel(coly , LabelDict[coly]),fontsize=8)
-        #  axs[idx].axes.xaxis.set_ticklabels([])
- #        axs[idx].set_title(coly, fontsize=5, loc='center')
+
          axs[idx].grid(True)
          contador += 1
-        #  idxLast = idx
-        #  xValuesLast = xValues
-    #axs[totalItems -1].set_ylabel(xColumnName)
-    # axs[idxLast].axes.xaxis.set_ticklabels(xValuesLast)
-    # axs[idxLast//2].axes.xaxis.set_ticklabels(xValuesLast)
+
     fig.tight_layout()
     fig.supxlabel( "            Time(s)",fontsize=10)
     
