@@ -49,33 +49,136 @@ st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_w
 #      condicao3 = [(dfOrigin['GndSpd'] <= 0.01)  & ((dfOrigin['BHF'] == 0) | (dfOrigin['BHF'] == 1)) ] 
 #      opcoes3 = [1]
 #      dfOrigin["Parado"] = np.select(condicao3, opcoes3, )   
+# def incluiCondicaoTrabalho(dfOrigin):
+#     condicao1 = [(dfOrigin['ChopperRPM'] == 0) 
+#                  & (dfOrigin["ChopperHydPrs"] == 0) 
+#                  & (dfOrigin["BHF"] == 0) 
+#                  & (dfOrigin["BaseCutRPM"] == 0) 
+#                  & (dfOrigin["BaseCutPrs"] == 0) 
+#                  & (dfOrigin["GndSpd"] == 0) 
+#                  & (dfOrigin['EngRPM'] == 0) 
+#                  & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) 
+#                  & (dfOrigin["HydrostatChrgPrs"] == 0)]
+#     opcoes1 =  [1]
+#     dfOrigin["Off"] = np.select(condicao1, opcoes1,)
+
+#     condicao2 = [(dfOrigin['ChopperRPM'] == 0) 
+#                  & (dfOrigin["ChopperHydPrs"] <= 30) 
+#                  & (dfOrigin["BHF"] == 0) 
+#                  & (dfOrigin["BaseCutRPM"] == 0) 
+#                  & (dfOrigin["BaseCutPrs"] == 0) 
+#                  & (dfOrigin["GndSpd"] == 0) 
+#                  & (dfOrigin['EngRPM'] == 800) 
+#                  & (dfOrigin['EngLoad'] <= 20) 
+#                  & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) 
+#                  & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)
+#                  ]
+#     opcoes2 =  [1]
+#     dfOrigin["PontoMorto"] = np.select(condicao2, opcoes2,)
+
+#     condicao3 = [(dfOrigin['ChopperRPM'] >= 170) & (dfOrigin['ChopperRPM'] <= 190)
+#                  & (dfOrigin["ChopperHydPrs"] <= 60.00) 
+#                  & (dfOrigin["BHF"] == 1) 
+#                 #  & (dfOrigin["BaseCutRPM"] == 0) 
+#                 #  & (dfOrigin["BaseCutPrs"] <= 5) 
+#                  & (dfOrigin["GndSpd"] == 0) 
+#                  & (dfOrigin['EngRPM']  >=801)  & (dfOrigin['EngRPM']  <=1600) 
+#                  & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) 
+#                 #  & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)
+#                  ]
+                 
+#     opcoes3 =  [1]
+#     dfOrigin["EsperandoColheita"] = np.select(condicao3, opcoes3,)
+
+#     condicao4 = [(dfOrigin['ChopperRPM'] <= 10) 
+#                  & (dfOrigin["ChopperHydPrs"] <= 30.00) 
+#                  & (dfOrigin["BHF"] == 0) 
+#                  & (dfOrigin["BaseCutRPM"] == 0) 
+#                  & (dfOrigin["BaseCutPrs"] <= 10) 
+#                  & (dfOrigin["GndSpd"] > 0) 
+#                 #  & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) 
+#                 #  &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)
+#                 #  &(dfOrigin["HydrostatChrgPrs"] <= 28.0)
+#                  ]
+#     opcoes4 =  [1]
+#     dfOrigin["Movendo"] = np.select(condicao4, opcoes4,)
+
+#     condicao5 = [(dfOrigin['ChopperRPM'] <= 177) 
+#                  & (dfOrigin["ChopperHydPrs"] >= 20.00) 
+#     #              & (dfOrigin["BHF"] == 1) 
+#     #              & (dfOrigin["BaseCutRPM"] > 515) 
+#     #              & (dfOrigin["BaseCutHght"] <= 100) 
+#     #              & (dfOrigin["BaseCutPrs"] >= 40) 
+#     #              & (dfOrigin["GndSpd"]  <=10.0) 
+#     #              & (dfOrigin["GndSpd"]  >=0.5 ) 
+#     #              & (dfOrigin['EngRPM'] <= 1699) 
+#     #              & (dfOrigin['EngLoad'] >40 ) 
+#     #              & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) 
+#                 #  & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)
+#                  ]
+#     opcoes5 =  [1]
+#     dfOrigin["Colhendo"] = np.select(condicao5, opcoes5,)
+
+#     condicao6 = [(dfOrigin['ChopperRPM'] > 177) 
+#                  & (dfOrigin["ChopperHydPrs"] > 80) 
+#                  & (dfOrigin["BHF"] == 1) 
+#                  & (dfOrigin["BaseCutRPM"] > 515) 
+#                  & (dfOrigin["BaseCutHght"] <= 100) 
+#                  & (dfOrigin["BaseCutPrs"] >= 40) 
+#                  & (dfOrigin["GndSpd"]  <=10.0) 
+#                  & (dfOrigin["GndSpd"]  >=0.5 ) 
+#                  & (dfOrigin['EngRPM']  <= 1699) 
+#                  & (dfOrigin['EngLoad'] >=50) 
+#                  & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 1) 
+#                  & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)
+#                  ]
+#     opcoes6 =  [1]
+#     dfOrigin["Embuchado"] = np.select(condicao6, opcoes6,)
+
+#     condicao7 = [(dfOrigin['ChopperRPM'] >= 255) 
+#                  & (dfOrigin["ChopperHydPrs"] <= 25) 
+#                  & (dfOrigin["BHF"] == 2) 
+#                  & (dfOrigin["BaseCutRPM"] == 630) 
+#                  & (dfOrigin["BaseCutHght"] >= 300) 
+#                  & (dfOrigin["BaseCutPrs"] <= 25) 
+#                  & (dfOrigin["GndSpd"] <= 3) 
+#                  & (dfOrigin['EngRPM'] >= 1700) 
+#                  & (dfOrigin['EngLoad'] >=50) 
+#                  & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) 
+#                  & (dfOrigin["HydrostatChrgPrs"] >= 18.0)
+#                  & (dfOrigin["HydrostatChrgPrs"] <= 28.0)
+#                  ]
+#     opcoes7 =  [1]
+#     dfOrigin["Reversao"] = np.select(condicao7, opcoes7,)
+
 
 def incluiCondicaoTrabalho(dfOrigin):
-    condicao1 = [(dfOrigin['ChopperRPM'] == 0) & (dfOrigin["ChopperHydPrs"] == 0) & (dfOrigin["BHF"] == 0) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] == 0) & (dfOrigin["GndSpd"] == 0) & (dfOrigin['EngRPM'] == 0) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) & (dfOrigin["HydrostatChrgPrs"] == 0)]
+    condicao1 = [(dfOrigin['ChopperRPM'] == 0)]
     opcoes1 =  [1]
     dfOrigin["Off"] = np.select(condicao1, opcoes1,)
 
-    condicao2 = [(dfOrigin['ChopperRPM'] == 0) & (dfOrigin["ChopperHydPrs"] <= 30) & (dfOrigin["BHF"] == 0) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] == 0) & (dfOrigin["GndSpd"] == 0) & (dfOrigin['EngRPM'] == 800) & (dfOrigin['EngLoad'] <= 20) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    condicao2 = [(dfOrigin["BHF"] == 0) & (dfOrigin["GndSpd"] >= 10)]
     opcoes2 =  [1]
     dfOrigin["PontoMorto"] = np.select(condicao2, opcoes2,)
     
-    condicao3 = [(dfOrigin['ChopperRPM'] == 182) & (dfOrigin["ChopperHydPrs"] >= 34 )&(dfOrigin["ChopperHydPrs"] <=36 ) & (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] <= 5) & (dfOrigin["GndSpd"] == 0) & (dfOrigin['EngRPM']  <=1600) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) & (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    condicao3 = [(dfOrigin["ChopperHydPrs"] <= 60.00) & (dfOrigin["BHF"] == 1)]
+                 
     opcoes3 =  [1]
     dfOrigin["EsperandoColheita"] = np.select(condicao3, opcoes3,)
 
-    condicao4 = [(dfOrigin['ChopperRPM'] <= 10) & (dfOrigin["ChopperHydPrs"] <= 25) & (dfOrigin["BHF"] == 0) & (dfOrigin["BaseCutRPM"] == 0) & (dfOrigin["BaseCutPrs"] <= 5) & (dfOrigin["GndSpd"] > 0) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    condicao4 = [(dfOrigin["BHF"] == 0) & (dfOrigin["GndSpd"] >= 10) ]
     opcoes4 =  [1]
     dfOrigin["Movendo"] = np.select(condicao4, opcoes4,)
 
-    condicao5 = [(dfOrigin['ChopperRPM'] <= 177) & (dfOrigin["ChopperHydPrs"] > 200) & (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutRPM"] > 515) & (dfOrigin["BaseCutHght"] <= 100) & (dfOrigin["BaseCutPrs"] >= 40) & (dfOrigin["GndSpd"]  <=10.0) & (dfOrigin["GndSpd"]  >=0.5 ) & (dfOrigin['EngRPM'] <= 1699) & (dfOrigin['EngLoad'] >40 ) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    condicao5 = [(dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutPrs"] >= 40) ]
     opcoes5 =  [1]
     dfOrigin["Colhendo"] = np.select(condicao5, opcoes5,)
 
-    condicao6 = [(dfOrigin['ChopperRPM'] > 177) & (dfOrigin["ChopperHydPrs"] > 80) & (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutRPM"] > 515) & (dfOrigin["BaseCutHght"] <= 100) & (dfOrigin["BaseCutPrs"] >= 40) & (dfOrigin["GndSpd"]  <=10.0) & (dfOrigin["GndSpd"]  >=0.5 ) & (dfOrigin['EngRPM']  <= 1699) & (dfOrigin['EngLoad'] >=50) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 1) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    condicao6 = [(dfOrigin['A2000_ChopperHydOilPrsHi'] == 1)]
     opcoes6 =  [1]
     dfOrigin["Embuchado"] = np.select(condicao6, opcoes6,)
 
-    condicao7 = [(dfOrigin['ChopperRPM'] >= 255) & (dfOrigin["ChopperHydPrs"] <= 25) & (dfOrigin["BHF"] == 2) & (dfOrigin["BaseCutRPM"] == 630) & (dfOrigin["BaseCutHght"] >= 300) & (dfOrigin["BaseCutPrs"] <= 25) & (dfOrigin["GndSpd"] <= 3) & (dfOrigin['EngRPM'] >= 1700) & (dfOrigin['EngLoad'] >=50) & (dfOrigin['A2000_ChopperHydOilPrsHi'] == 0) &  (dfOrigin["HydrostatChrgPrs"] >= 18.0)&(dfOrigin["HydrostatChrgPrs"] <= 28.0)]
+    condicao7 = [(dfOrigin["BHF"] == 2)]
     opcoes7 =  [1]
     dfOrigin["Reversao"] = np.select(condicao7, opcoes7,)
 
