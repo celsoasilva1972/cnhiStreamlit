@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from pandas import read_csv
-from commom import commomHeader
-import plotly as plty
+# from commom import commomHeader
+# import plotly as plty
 import matplotlib.pyplot as plt
 # import seaborn as sns
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
+# import plotly.express as px
+# import plotly.graph_objects as go
+# import plotly.figure_factory as ff
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
 st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_with_upwards_trend")
@@ -16,16 +16,21 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Variáveis
 
-arquiveList = [] # nome do arquivo
-dfList = [] # dataFrame de cada arquivo
-checkBoxList = [] # todos os checkbox
+
+arquiveList1 = [] # nome do arquivo1
+dfList1 = [] # dataFrame de cada arquivo1
+checkBoxList1 = [] # todos os checkbox1
 
 arquiveList2 = [] # nome do arquivo2
 dfList2 = [] # dataFrame de cada arquivo2
 checkBoxList2 = [] # todos os checkbox2
 
-columnPlot = ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
+arquiveList3 = [] # nome do arquivo3
+dfList3 = [] # dataFrame de cada arquivo3
+checkBoxList3 = [] # todos os checkbox3
 
+columnPlot = ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
+#columnPlot = ['ChopperRPM','ChopperHydPrs','BHF']#,'BaseCutRPM']
 def columnsNames():
     columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs','Off','Iddle','Waiting to Harvest','Moving','Harvesting','Choke Chopper','Reversion']
     
@@ -36,16 +41,14 @@ def shortColumnsNames():
     
     return columns
 
-options = st.sidebar.selectbox(
-    'Linechart_select Y variable',
-    columnsNames())
-correlogram=st.sidebar.checkbox("Correlograma",False)
-histogram=st.sidebar.checkbox("Histograma",False)
-options2 = st.sidebar.selectbox(
-    'select state',
-    shortColumnsNames())
-multigram=st.sidebar.checkbox("MultiHist",False)
-plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
+# options = st.sidebar.selectbox('Linechart_select Y variable', columnsNames())
+# plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
+# options2 = st.sidebar.selectbox('select state',shortColumnsNames())
+# multigram=st.sidebar.checkbox("MultiHist",False)
+normalized = st.sidebar.checkbox("Normalizado",False)
+# histogram=st.sidebar.checkbox("Histograma",False)
+#correlogram=st.sidebar.checkbox("Correlograma",False)
+
 
 
 def selConName(colx, coly,df):
@@ -81,81 +84,77 @@ def selConNameManyDataset(coly,checkList,dfListOld,options2):
     return result # retorna o result 
 
 #§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
-def incluiCondicaoTrabalho(dfOrigin):
 
-    condicao1 = [(dfOrigin['EngRPM'] == 0)]
+def incluiCondicaoTrabalho(df):
+
+    condicao1 = [(df['EngRPM'] == 0)]
     opcoes1 =  [1]
-    dfOrigin["Off"] = np.select(condicao1, opcoes1,)
+    df["Off"] = np.select(condicao1, opcoes1,)
 
-    condicao2 = [(dfOrigin["BHF"] == 0) & (dfOrigin["GndSpd"] < 0.36)]
+    condicao2 = [(df["BHF"] == 0) & (df["GndSpd"] < 0.36)]
     opcoes2 =  [1]
-    dfOrigin["Iddle"] = np.select(condicao2, opcoes2,)
+    df["Iddle"] = np.select(condicao2, opcoes2,)
 
-    condicao3 = [(dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutPrs"] < 5)]
+    condicao3 = [(df["BHF"] == 1) & (df["BaseCutPrs"] < 5.00)]
     opcoes3 =  [1]
-    dfOrigin["Waiting to Harvest"] = np.select(condicao3, opcoes3,)
+    df["Waiting to Harvest"] = np.select(condicao3, opcoes3,)
 
-    condicao4 = [(dfOrigin["BHF"] == 0)  & (dfOrigin["GndSpd"] >= 0.36)]
+    condicao4 = [(df["BHF"] == 0)  & (df["GndSpd"] >= 0.36)]
     opcoes4 =  [1]
-    dfOrigin["Moving"] = np.select(condicao4, opcoes4,)
+    df["Moving"] = np.select(condicao4, opcoes4,)
 
-    condicao5 = [ (dfOrigin["BHF"] == 1) & (dfOrigin["BaseCutPrs"] >= 40) ]
+    condicao5 = [ (df["BHF"] == 1) & (df["BaseCutPrs"] >= 40) ]
     opcoes5 =  [1]
-    dfOrigin["Harvesting"] = np.select(condicao5, opcoes5,)
+    df["Harvesting"] = np.select(condicao5, opcoes5,)
 
-    condicao6 = [(dfOrigin['A2000_ChopperHydOilPrsHi'] == 1)]
+    condicao6 = [(df['A2000_ChopperHydOilPrsHi'] == 1)]
     opcoes6 =  [1]
-    dfOrigin["Choke Chopper"] = np.select(condicao6, opcoes6,)
+    df["Choke Chopper"] = np.select(condicao6, opcoes6,)
 
-    condicao7 = [(dfOrigin["BHF"] == 2)]
+    condicao7 = [(df["BHF"] == 2)]
     opcoes7 =  [1]
-    dfOrigin["Reversion"] = np.select(condicao7, opcoes7,)
+    df["Reversion"] = np.select(condicao7, opcoes7,)
 #§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
 
-col1,col2 = st.columns(2)
-with col1:
-    uploaded_files = st.file_uploader("Choose a CSV_Old file", accept_multiple_files=True,type=['csv'])
-    for uploaded_file in uploaded_files:
-        arquiveList.append(uploaded_file.name)
-        df = read_csv(uploaded_file,sep=";")
-        df.rename(columns={"Time [s]": "Time"}, inplace= True)
-        incluiCondicaoTrabalho(df)
-        dfOrigin=df.copy()
-        dfList.append(df)
-with col2:
-    uploaded_files2 = st.file_uploader("Choose a CSV_New file", accept_multiple_files=True,type=['csv'])
-    for uploaded_file in uploaded_files2:
-        arquiveList2.append(uploaded_file.name)
-        df = read_csv(uploaded_file,sep=";")
-        df.rename(columns={"Time [s]": "Time"}, inplace= True)
-        incluiCondicaoTrabalho(df)
-        dfOrigin=df.copy()
-        dfList2.append(df)
 
-if len (dfList) != 0:
+idSelected = []
+eixoAxs=[]
+tab1, tab2, tab3 = st.tabs(["MultiPlot", "MultiHist","correlogram"])
 
-    for i in range(len(arquiveList)):
-        nomeArquivo = f"arquivoOld {i+1}"
-        checkBoxList.append(st.sidebar.checkbox(nomeArquivo,False)) 
+with tab1:
 
-if len (dfList2) != 0:
+    col1,col2 = st.columns(2)
+    with col1:
+        uploaded_files1 = st.file_uploader("Choose a CSV file", accept_multiple_files=True,type=['csv'])
+        for uploaded_file in uploaded_files1:
+            arquiveList1.append(uploaded_file.name)
+            df = read_csv(uploaded_file,sep=";")
+            df.rename(columns={"Time [s]": "Time"}, inplace= True)
+            incluiCondicaoTrabalho(df)
+            if normalized:
+                df=(df-df.min())/(df.max()-df.min())
+          
+            # dfOrigin=df.copy()
+            dfList1.append(df)
+            st.session_state['df'] = df
+      
+        
+        
+    with col2:
 
-    for i in range(len(arquiveList2)):
-        nomeArquivo = f"arquivoNew {i+1}"
-        checkBoxList2.append(st.sidebar.checkbox(nomeArquivo,False)) 
-
-
-#§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
-
-if plot_fixed_mult:
-    idSelected = []
-    eixoAxs=[]
-
-    plt.figure(figsize=(20,18))
-    for idx,checkB in enumerate(checkBoxList):
-        if checkB:
-            idSelected.append(idx)
-                
+        options = st.selectbox('Linechart_select Y variable', columnsNames())
+        for i in range(len(arquiveList1)):
+            nomeArquivo = f"arquivo {i+1}"
+            checkBoxList1.append(st.checkbox(nomeArquivo,False)) 
+        with st.container():
+        # if plot_fixed_mult:
+            idSelected = []
+            eixoAxs=[]
+            plt.figure(figsize=(20,18))
+            for idx,checkB in enumerate(checkBoxList1):
+                if checkB:
+                    idSelected.append(idx)
+            
     totalItems = (len(idSelected))
 
     if totalItems == 0:
@@ -173,10 +172,10 @@ if plot_fixed_mult:
 
         for idx,ax in enumerate(eixoAxs):
             selectPosition=idSelected[idx]
-            xValues, yValues = selConName("Time",options,dfList[selectPosition])
+            xValues, yValues = selConName("Time",options,dfList1[selectPosition])
             ax.tick_params(labelsize=5)
             ax.scatter(xValues, yValues, s=0.5)
-            ax.set_title(f'{arquiveList[selectPosition]} (Arquivo {selectPosition + 1})',fontsize=8)
+            ax.set_title(f'{arquiveList1[selectPosition]} (Arquivo {selectPosition + 1})',fontsize=8)
             ax.grid(True)
 
         plt.gcf().set_size_inches(10, 8)  
@@ -185,53 +184,45 @@ if plot_fixed_mult:
         
         st.pyplot(fig)
 
-#§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
-if correlogram:
-    pass
-# col1,col2 = st.columns(2)
-# with col1:
-#     val1 = st.selectbox('Valor 1',columnsNames())
-# with col2:
-#     val2 = st.selectbox('Valor 2',columnsNames())
+        checks = st.columns(4)
+            
+with tab2:
+    col3,col4,col5 = st.columns(3)
 
-#     plt.figure(figsize=(12,10), dpi= 80)
-#     sns.heatmap(df.corr(), xticklabels=df.corr(val1), yticklabels=df.corr(val2), cmap='RdYlGn', center=0, annot=True)
+    with col3:
+        uploaded_files2 = st.file_uploader("Choose a CSV_Old file", accept_multiple_files=True,type=['csv'])
+        for uploaded_file in uploaded_files2:
+            arquiveList2.append(uploaded_file.name)
+            df = read_csv(uploaded_file,sep=";")
+            df.rename(columns={"Time [s]": "Time"}, inplace= True)
+            incluiCondicaoTrabalho(df)
+            dfList2.append(df)
+            st.session_state['df'] = df
 
-#     # Decorations
-#     # plt.title('Correlogram of mtcars', fontsize=22)
-#     plt.xticks(fontsize=12)
-#     plt.yticks(fontsize=12)
-#     plt.show()
+    with col4:
+        uploaded_files3 = st.file_uploader("Choose a CSV_New file", accept_multiple_files=True,type=['csv'])
+        for uploaded_file in uploaded_files3:
+            arquiveList3.append(uploaded_file.name)
+            df = read_csv(uploaded_file,sep=";")
+            df.rename(columns={"Time [s]": "Time"}, inplace= True)
+            incluiCondicaoTrabalho(df)
+            dfList3.append(df)
+            st.session_state['df'] = df
+    with col5:
+        options2 = st.selectbox('select state',shortColumnsNames())
 
-#§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
-    
-if histogram:
+        if len (arquiveList2) != 0:
+                
+            for i in range(len(arquiveList2)):
+                nomeArquivo = f"arquivoOld {i+1}"
+                checkBoxList2.append(st.checkbox(nomeArquivo,False)) 
 
-    #x,y = selConName("Time",options,dfList[0])
-    old = selConNameManyDataset(options, checkBoxList,dfList, options)
-    new = selConNameManyDataset(options, checkBoxList2,dfList2, options)
+        if len (arquiveList3) != 0:
 
-    #y = dfList[0] + dfList[1]
-    print (len(old),len(new))
-    bins = np.linspace(0, 20, 100)
-    
-    fig, axOne = plt.subplots(nrows=1, ncols=1,layout='constrained', figsize=(8,5))
-    if len(new)!=0:
-        axOne.hist(new, alpha=0.5, label="New",color="y")
-    if len(old)!=0:
-        axOne.hist(old, alpha=0.5, label="Old",color="r")
-    axOne.grid(True)
-    axOne.set_title(options,fontsize=10)
-    #axOne.hist(y, bins, alpha=0.5, label='y')
-    axOne.legend(loc='upper right')
-    #plt.hist().set_size_inches(10, 8) 
-
-    st.pyplot(fig)
-
-   
-if multigram:
-    pass
-
+            for i in range(len(arquiveList3)):
+                nomeArquivo = f"arquivoNew {i+1}"
+                checkBoxList3.append(st.checkbox(nomeArquivo,False))
+            # if multigram:
     contador = 0
     axs = []
 
@@ -253,8 +244,8 @@ if multigram:
        plt.gcf().set_size_inches(10, 8)     
     
     for idx, coly in enumerate(columnPlot):
-         old = selConNameManyDataset(coly, checkBoxList,dfList,options2)
-         new = selConNameManyDataset(coly, checkBoxList2,dfList2,options2)
+         old = selConNameManyDataset(coly, checkBoxList2,dfList2,options2)
+         new = selConNameManyDataset(coly, checkBoxList3,dfList3,options2)
          axs[idx].tick_params(labelsize=5)
          axs[idx].set_title(coly,fontsize=10)
          axs[idx].grid(True)
@@ -267,7 +258,50 @@ if multigram:
     #print(columnChoose)
 
 
+#§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
+# with tab3:    
+#     if histogram:
+#         #x,y = selConName("Time",options,dfList[0])
+#         old = selConNameManyDataset(options, checkBoxList2,dfList2, options)
+#         new = selConNameManyDataset(options, checkBoxList3,dfList3, options)
 
+#         #y = dfList[0] + dfList[1]
+#         print (len(old),len(new))
+#         bins = np.linspace(0, 20, 100)
+        
+#         fig, axOne = plt.subplots(nrows=1, ncols=1,layout='constrained', figsize=(8,5))
+#         if len(new)!=0:
+#             axOne.hist(new, alpha=0.5, label="New",color="y")
+#         if len(old)!=0:
+#             axOne.hist(old, alpha=0.5, label="Old",color="r")
+#         axOne.grid(True)
+#         axOne.set_title(options,fontsize=10)
+#         #axOne.hist(y, bins, alpha=0.5, label='y')
+#         axOne.legend(loc='upper right')
+#         #plt.hist().set_size_inches(10, 8) 
+
+#         st.pyplot(fig)
+
+#§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
+with tab3:
+    #  if correlogram:
+    pass
+
+# col1,col2 = st.columns(2)
+# with col1:
+#     val1 = st.selectbox('Valor 1',columnsNames())
+# with col2:
+#     val2 = st.selectbox('Valor 2',columnsNames())
+
+#     plt.figure(figsize=(12,10), dpi= 80)
+#     sns.heatmap(df.corr(), xticklabels=df.corr(val1), yticklabels=df.corr(val2), cmap='RdYlGn', center=0, annot=True)
+
+#     # Decorations
+#     # plt.title('Correlogram of mtcars', fontsize=22)
+#     plt.xticks(fontsize=12)
+#     plt.yticks(fontsize=12)
+#     plt.show()
+   
 
 
 
