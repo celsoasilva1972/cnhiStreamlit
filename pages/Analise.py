@@ -2,13 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from pandas import read_csv
-# from commom import commomHeader
-# import plotly as plty
+from matplotlib.ticker import PercentFormatter
+import seaborn as sns
 import matplotlib.pyplot as plt
-# import seaborn as sns
-# import plotly.express as px
-# import plotly.graph_objects as go
-# import plotly.figure_factory as ff
+
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
 st.set_page_config(layout="wide",page_title="Cana de Açucar",page_icon="chart_with_upwards_trend")
@@ -29,6 +26,10 @@ arquiveList3 = [] # nome do arquivo3
 dfList3 = [] # dataFrame de cada arquivo3
 checkBoxList3 = [] # todos os checkbox3
 
+arquiveList4 = [] # nome do arquivo4
+dfList4 = [] # dataFrame de cada arquivo4
+checkBoxList4 = [] # todos os checkbox4
+
 columnPlot = ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
 #columnPlot = ['ChopperRPM','ChopperHydPrs','BHF']#,'BaseCutRPM']
 def columnsNames():
@@ -45,11 +46,24 @@ def shortColumnsNames():
 # plot_fixed_mult=st.sidebar.checkbox("Plot Estático Multilinhas",False)
 # options2 = st.sidebar.selectbox('select state',shortColumnsNames())
 # multigram=st.sidebar.checkbox("MultiHist",False)
-normalized = st.sidebar.checkbox("Normalizado",False)
+# normalized = st.sidebar.checkbox("Normalizado",False)
 # histogram=st.sidebar.checkbox("Histograma",False)
 #correlogram=st.sidebar.checkbox("Correlograma",False)
 
 
+def calculaHistPercent(dados):
+        n, bins , _ = plt.hist(dados)
+        porcentagem = 100 * n / np.sum(n)
+        width = bins[1] - bins[0]
+        center = (bins[:-1] + bins[1:]) / 2
+        plt.clf()
+        return porcentagem, width, center
+
+def getValuesHist(idx, allHistValues):
+    porcentagem, width,  center = allHistValues[idx]
+    return porcentagem, width,  center 
+
+columnPlot = ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs']
 
 def selConName(colx, coly,df):
     df_filter = df.loc[:, [colx, coly]]
@@ -131,8 +145,8 @@ with tab1:
             df = read_csv(uploaded_file,sep=";")
             df.rename(columns={"Time [s]": "Time"}, inplace= True)
             incluiCondicaoTrabalho(df)
-            if normalized:
-                df=(df-df.min())/(df.max()-df.min())
+            # if normalized:
+            #     df=(df-df.min())/(df.max()-df.min())
           
             # dfOrigin=df.copy()
             dfList1.append(df)
@@ -230,31 +244,70 @@ with tab2:
 
     totalItems = len(columnPlot)
 
-    if True: # 
-    #    plt.figure(figsize=(5,3))
-       rows = (totalItems // 2) + totalItems % 2
-       fig, axIndefined = plt.subplots(nrows=rows,ncols=2,layout='constrained')
-       if (totalItems % 2) == 1 :
-        axIndefined[-1,-1].axis('off')
 
-       for line in range(rows):
-           axs.append(axIndefined[line][0])
-       for line in range(rows):
-           axs.append(axIndefined[line][1])
-       plt.gcf().set_size_inches(10, 8)     
-    
+    rows = (totalItems // 2) + totalItems % 2
+    allHistValuesOld = {}
+    allHistValuesNew = {}
+
     for idx, coly in enumerate(columnPlot):
-         old = selConNameManyDataset(coly, checkBoxList2,dfList2,options2)
-         new = selConNameManyDataset(coly, checkBoxList3,dfList3,options2)
-         axs[idx].tick_params(labelsize=5)
-         axs[idx].set_title(coly,fontsize=10)
-         axs[idx].grid(True)
-         axs[idx].hist(old,bins= 50, alpha=0.5, label="Old",color="y")
-         axs[idx].hist(new,bins= 50, alpha=0.5, label="New",color="r")
-         axs[idx].legend(loc='upper left', fontsize=5)
-         print(options2)
+        old = selConNameManyDataset(coly, checkBoxList2,dfList2,options2)
+        new = selConNameManyDataset(coly, checkBoxList3,dfList3,options2)    
+        # new = dados1[coly][:]
+        # old = dados2[coly][:]
+        porcentagem, width,  center = calculaHistPercent(old)
+        allHistValuesOld[idx] = {}
+        allHistValuesOld[idx] = [porcentagem,width, center]
+        porcentagem, width,  center = calculaHistPercent(new)
+        allHistValuesNew[idx] = {}
+        allHistValuesNew[idx] = [porcentagem,width, center]    
 
+    fig, axIndefined = plt.subplots(nrows=rows,ncols=2)#,layout='constrained')
+
+    if (totalItems % 2) == 1 :
+        axIndefined[-1,-1].axis('off')
+    plt.gcf().set_size_inches(10, 8)
+
+    for line in range(rows):
+        axs.append(axIndefined[line][0])
+    for line in range(rows):
+        axs.append(axIndefined[line][1])
+
+    for idx, coly in enumerate(columnPlot):
+        axs[idx].tick_params(labelsize=5)
+        axs[idx].set_title(coly,fontsize=5)
+        axs[idx].grid(True)
+        porcentagemOld, widthOld,  centerOld = getValuesHist(idx, allHistValuesOld)
+        porcentagemNew, widthNew,  centerNew = getValuesHist(idx, allHistValuesNew)
+        axs[idx].bar(centerOld, porcentagemOld, align='center', label="Old", width=widthOld, edgecolor='black',alpha=0.5)
+        axs[idx].bar(centerNew, porcentagemNew, align='center',  label="New", width=widthNew, edgecolor='black',alpha=0.5)
+        axs[idx].legend(loc='upper left', fontsize=5)
+    
     st.pyplot(fig)
+
+    # if True: # 
+    # #    plt.figure(figsize=(5,3))
+    #    rows = (totalItems // 2) + totalItems % 2
+    #    fig, axIndefined = plt.subplots(nrows=rows,ncols=2,layout='constrained')
+    #    if (totalItems % 2) == 1 :
+    #     axIndefined[-1,-1].axis('off')
+
+    #    for line in range(rows):
+    #        axs.append(axIndefined[line][0])
+    #    for line in range(rows):
+    #        axs.append(axIndefined[line][1])
+    #    plt.gcf().set_size_inches(10, 8)     
+    
+    # for idx, coly in enumerate(columnPlot):
+    #      old = selConNameManyDataset(coly, checkBoxList2,dfList2,options2)
+    #      new = selConNameManyDataset(coly, checkBoxList3,dfList3,options2)
+    #      axs[idx].tick_params(labelsize=5)
+    #      axs[idx].set_title(coly,fontsize=10)
+    #      axs[idx].grid(True)
+    #      axs[idx].hist(old,bins= 50, alpha=0.5, label="Old",color="y")
+    #      axs[idx].hist(new,bins= 50, alpha=0.5, label="New",color="r")
+    #      axs[idx].legend(loc='upper left', fontsize=5)
+
+    # st.pyplot(fig)
     #print(columnChoose)
 
 
@@ -284,24 +337,42 @@ with tab2:
 
 #§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§#
 with tab3:
-    #  if correlogram:
     pass
+    # col6,col7 = st.columns(2)
+    
+    # with col6:
+    # uploaded_files4 = st.file_uploader("Choose your file",type=['csv'])
+        # for uploaded_file in uploaded_files4:
+#            arquiveList4.append(uploaded_file.name)
+    # df = read_csv(uploaded_file,sep=";")
+    # df.rename(columns={"Time [s]": "Time"}, inplace= True)
+    # incluiCondicaoTrabalho(df)
+            # dfList4.append(df)
+    # st.session_state['df'] = df
+    # print(df)
+    # with col7:
+    #     options3 = st.selectbox('state',shortColumnsNames())
+    #     for i in range(len(arquiveList4)):
+    #         nomeArquivo = f"arquivo {i+1}"
+    #         checkBoxList4.append(st.checkbox(nomeArquivo,False)) 
+    #     with st.container():
+    #     # if plot_fixed_mult:
+    #         idSelected = []
+    #         eixoAxs=[]
+    #         plt.figure(figsize=(20,18))
+    #         for idx,checkB in enumerate(checkBoxList4):
+    #             if checkB:
+    #                 idSelected.append(idx)
 
-# col1,col2 = st.columns(2)
-# with col1:
-#     val1 = st.selectbox('Valor 1',columnsNames())
-# with col2:
-#     val2 = st.selectbox('Valor 2',columnsNames())
+# totalItems = (len(idSelected))
 
-#     plt.figure(figsize=(12,10), dpi= 80)
-#     sns.heatmap(df.corr(), xticklabels=df.corr(val1), yticklabels=df.corr(val2), cmap='RdYlGn', center=0, annot=True)
+    # corr_matrix = df.corr()
+    # Criar um mapa de calor para visualizar a matriz de correlação
+    # plt.figure(figsize=(10,8))
+    # sns.heatmap(corr_matrix, annot=True, fmt=".2f")
+    # plt.title('Matriz de Correlação')
+    # plt.show()
 
-#     # Decorations
-#     # plt.title('Correlogram of mtcars', fontsize=22)
-#     plt.xticks(fontsize=12)
-#     plt.yticks(fontsize=12)
-#     plt.show()
-   
 
 
 
