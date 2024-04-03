@@ -5,7 +5,7 @@ import plotly as plt
 import matplotlib.pyplot as plt
 from pandas import read_csv
 from commom import commomHeader, showAllColumns
-
+from util import renameColumns
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # configurações de sessão
@@ -182,6 +182,7 @@ def incluiCondicaoTrabalho(dfOrigin):
     opcoes7 =  [1]
     dfOrigin["Reversao"] = np.select(condicao7, opcoes7,)
 
+
 def lerArquivo():
     arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'])
    
@@ -203,8 +204,8 @@ def lerArquivo():
                     df.dtypes[df.dtypes == 'int64'] 
 
                     df.replace(np.nan,0,inplace=True)
+                    renameColumns(df)
                     
-                    df.rename(columns={"Time [s]": "Time"}, inplace= True)
                     incluiCondicaoTrabalho(df)
                     dfOrigin=df.copy()
 

@@ -3,8 +3,10 @@ import pandas as pd
 import numpy as np
 from pandas import read_csv
 from matplotlib.ticker import PercentFormatter
-import seaborn as sns
+#import seaborn as sns
 import matplotlib.pyplot as plt
+from util import renameColumns
+
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
@@ -55,6 +57,7 @@ def calculaHistPercent(dados):
         n, bins , _ = plt.hist(dados)
         porcentagem = 100 * n / np.sum(n)
         width = bins[1] - bins[0]
+        print(f'width={width}')
         center = (bins[:-1] + bins[1:]) / 2
         plt.clf()
         return porcentagem, width, center
@@ -143,7 +146,7 @@ with tab1:
         for uploaded_file in uploaded_files1:
             arquiveList1.append(uploaded_file.name)
             df = read_csv(uploaded_file,sep=";")
-            df.rename(columns={"Time [s]": "Time"}, inplace= True)
+            renameColumns(df)
             incluiCondicaoTrabalho(df)
             # if normalized:
             #     df=(df-df.min())/(df.max()-df.min())
@@ -208,7 +211,7 @@ with tab2:
         for uploaded_file in uploaded_files2:
             arquiveList2.append(uploaded_file.name)
             df = read_csv(uploaded_file,sep=";")
-            df.rename(columns={"Time [s]": "Time"}, inplace= True)
+            renameColumns(df)
             incluiCondicaoTrabalho(df)
             dfList2.append(df)
             st.session_state['df'] = df
@@ -218,7 +221,7 @@ with tab2:
         for uploaded_file in uploaded_files3:
             arquiveList3.append(uploaded_file.name)
             df = read_csv(uploaded_file,sep=";")
-            df.rename(columns={"Time [s]": "Time"}, inplace= True)
+            renameColumns(df)
             incluiCondicaoTrabalho(df)
             dfList3.append(df)
             st.session_state['df'] = df
