@@ -233,7 +233,7 @@ def selConName(colx, coly, df):
     return df_filter[colx], df_filter[coly]
 
 
-def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
+def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict, maxStickPoints):
     contador = 0
     axs = []
 
@@ -265,9 +265,21 @@ def showAllColumnsByRow(df, xColumnName, columnChoose, LabelDict):
            axs.append(axIndefined[line][1])
        plt.gcf().set_size_inches(10, 8)     
     
+    #maxStickPoints = 20
+    xValueSparse = None
+    labelsizeParam = 5
+    rotationParam = 360
+    if maxStickPoints > 25:
+        rotationParam = 90
+        if maxStickPoints > 70:
+            labelsizeParam = 4
     for idx, coly in enumerate(columnChoose):
          xValues, yValues = selConName(xColumnName,coly,df)
-         axs[idx].tick_params(labelsize=5)
+         maxValue = max(xValues)
+         if xValueSparse is None: # gerar os ticks somente uma vez
+             xValueSparse = np.linspace(start=1, stop=maxValue, num=maxStickPoints).astype(int)
+         axs[idx].set_xticks(xValueSparse)
+         axs[idx].tick_params(labelsize=labelsizeParam, rotation=rotationParam)
          axs[idx].scatter(xValues, yValues, s=0.5)
          axs[idx].set_ylabel(tratarLabel(coly , LabelDict[coly]),fontsize=8)
 
@@ -335,8 +347,8 @@ commomHeader(st)
 
 # Check Box normalização
 normalizadoCheckbox = st.sidebar.checkbox("normalizado",False)
+quantidadeTicksX = st.sidebar.slider("Quantidade de pontos no eixo X", 5, 100, 20)
 
-# Variáveis do df original normalizado
 options = st.sidebar.multiselect(
     'Linechart_select Y variable',
     columnsNames(),
@@ -431,7 +443,7 @@ if plot_fixed_mult:
         #color = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
         labelDict = getUnidadeLabels()
 
-        showAllColumnsByRow(dfGeral,'Time',options, labelDict)
+        showAllColumnsByRow(dfGeral,'Time',options, labelDict, quantidadeTicksX)
 
     # st.subheader("Line Chart Full")
     # someColors = ['black', 'blue', 'brown', 'coral', 'crimson', 'gold', 'green', 'grey', 'orange', 'purple','yellow', 'red', 'silver', 'violet', 'darkgreen']
