@@ -223,7 +223,7 @@ def lerArquivo():
     return df, dfOrigin
 
 def columnsNames():
-    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs','Off','PontoMorto','EsperandoColheita','Movendo','Colhendo','Embuchado','Reversao']
+    columns =  ['ChopperRPM','ChopperHydPrs','BHF','BaseCutRPM','BaseCutHght','BaseCutPrs','GndSpd','EngRPM','Js_1YAxPositn','Js_1XAxPositn','EngLoad','A2000_ChopperHydOilPrsHi','ChopperPctSetp','HydrostatChrgPrs','Off','PontoMorto','EsperandoColheita','Movendo','Colhendo','Embuchado','Reversao', 'Temperature']
     return columns
 
 def selConName(colx, coly, df):
