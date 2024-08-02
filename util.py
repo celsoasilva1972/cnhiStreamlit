@@ -9,7 +9,9 @@ def renameColumns(df):
     df.rename(columns={"Chopper_Hydr_Press" : "ChopperHydPrs"}, inplace= True)
     df.rename(columns={"BHF_On_Off" : "BHF"}, inplace= True)
     ## onde está o 'BaseCutRPM'?                       
-    df.rename(columns={"Prim_Extr_Rpm_Setp":"BaseCutRPM"}, inplace= True) #colocado qualquer rpm para testar
+    #df.rename(columns={"Prim_Extr_Rpm_Setp":"BaseCutRPM"}, inplace= True) #colocado qualquer rpm para testar
+    df.rename(columns={"BaseCutter_Rpm":"BaseCutRPM"}, inplace= True) #colocado qualquer rpm para testar
+    
                        
     df.rename(columns={"basecutter_height":"BaseCutHght"}, inplace= True)
     df.rename(columns={"Basecutter_pressure":"BaseCutPrs"}, inplace= True)
