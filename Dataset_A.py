@@ -203,7 +203,7 @@ def lerArquivo():
                                 
                     df.dtypes[df.dtypes == 'int64'] 
 
-                    df.replace(np.nan,0,inplace=True)
+                    #df.replace(np.nan,0,inplace=True)
                     renameColumns(df)
                     
                     incluiCondicaoTrabalho(df)
